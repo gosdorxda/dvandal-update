@@ -22,8 +22,7 @@
         "time-ago": "*",
         "request": "^2.88.0",
         "request-promise-native": "^1.0.5",
-        "os-utils": "0.0.14",
-        "coingecko-api":"*"
+        "os-utils": "0.0.14"
     },
     "engines": {
         "node": ">=8.11.3"
