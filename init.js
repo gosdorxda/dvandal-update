@@ -40,9 +40,6 @@ if (cluster.isWorker){
         case 'chartsDataCollector':
             require('./lib/chartsDataCollector.js');
             break;
-        case 'telegramBot':
-            require('./lib/telegramBot.js');
-            break;
     }
     return;
 }
@@ -53,10 +50,10 @@ require('./lib/exceptionWriter.js')(logSystem);
 
 // Pool informations
 log('info', logSystem, 'Starting Cryptonote Node.JS pool version %s', [version]);
- 
+
 // Run a single module ?
 var singleModule = (function(){
-    var validModules = ['pool', 'api', 'unlocker', 'payments', 'chartsDataCollector', 'telegramBot'];
+    var validModules = ['pool', 'api', 'unlocker', 'payments', 'chartsDataCollector'];
 
     for (var i = 0; i < process.argv.length; i++){
         if (process.argv[i].indexOf('-module=') === 0){
@@ -94,9 +91,6 @@ var singleModule = (function(){
                 case 'chartsDataCollector':
                     spawnChartsDataCollector();
                     break;
-                case 'telegramBot':
-                    spawnTelegramBot();
-                    break;
             }
         }
         else{
@@ -105,7 +99,6 @@ var singleModule = (function(){
             spawnPaymentProcessor();
             spawnApi();
             spawnChartsDataCollector();
-            spawnTelegramBot();
         }
     });
 })();
@@ -268,23 +261,6 @@ function spawnChartsDataCollector(){
         log('error', logSystem, 'chartsDataCollector died, spawning replacement...');
         setTimeout(function(){
             spawnChartsDataCollector();
-        }, 2000);
-    });
-}
-
-/**
- * Spawn telegram bot module
- **/
-function spawnTelegramBot(){
-    if (!config.telegram || !config.telegram.enabled || !config.telegram.token) return;
-
-    var worker = cluster.fork({
-        workerType: 'telegramBot'
-    });
-    worker.on('exit', function(code, signal){
-        log('error', logSystem, 'telegramBot died, spawning replacement...');
-        setTimeout(function(){
-            spawnTelegramBot();
         }, 2000);
     });
 }
